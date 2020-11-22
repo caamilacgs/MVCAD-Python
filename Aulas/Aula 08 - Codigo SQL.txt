@@ -1,0 +1,226 @@
+-- Comandos utilizados na aula (Lembre-se, os carácteres -- fazem com que a linha seja um comentário, ela não faz parte do comando)
+-- Criar banco de dados
+-- create database clinica_mvcad;
+-- Com o query tool a partir da base de dados clinica_mvcad:
+
+
+-- Criar tabela pessoa
+create table pessoa (
+    id serial PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    data_nascimento date NOT NULL,
+    cpf char(11)
+);
+
+-- Criar tabela contato
+create table contato (
+    id serial PRIMARY KEY,
+    telefone VARCHAR(11) NULL,
+	email VARCHAR(150),
+    id_pessoa integer REFERENCES pessoa(id) NOT NULL
+);
+
+-- Criar tabela endereco
+create table endereco (
+    id serial PRIMARY KEY,
+    logradouro VARCHAR(100) NOT NULL,
+	numero VARCHAR(20) NULL,
+	bairro VARCHAR(50) NULL,
+	cidade VARCHAR(100) NOT NULL,
+	uf char(2) NOT NULL,
+    id_pessoa integer REFERENCES pessoa(id) NOT NULL
+);
+
+
+-- Criar tabela paciente
+create table paciente (
+    id serial PRIMARY KEY,
+    plano_saude VARCHAR(50),
+    id_pessoa integer REFERENCES pessoa(id) NOT NULL
+);
+
+
+
+-- Criar tabela medico
+create table medico (
+    id serial PRIMARY KEY,
+    crm VARCHAR(50) NOT NULL,
+	especialidade VARCHAR(150) NOT NULL,
+    id_pessoa integer REFERENCES pessoa(id) NOT NULL
+);
+
+
+-- Criar tabela consulta
+create table consulta (
+    id serial PRIMARY KEY,
+    data timestamp NOT NULL,
+	valor decimal(10,2),
+    id_paciente integer REFERENCES paciente(id) NOT NULL,
+	id_medico integer REFERENCES medico(id) NOT NULL
+);
+
+
+--inserir conteúdo dentro da tabela pessoa
+insert into pessoa(nome, data_nascimento, cpf) 
+values ('Priscila', '1992-02-24', '11111111111');
+
+insert into pessoa(nome, data_nascimento, cpf) 
+values ('Alini', '1089-12-06', '22222222222');
+
+insert into pessoa(nome, data_nascimento, cpf) 
+values ('Dani', '1990-05-04', '33333333333');
+
+insert into pessoa(nome, data_nascimento, cpf) 
+values ('Jéssica', '1999-07-05', '44444444444');
+
+
+--inserir conteúdo dentro da contato
+insert into contato(telefone, email, id_pessoa)
+values('66986363948', 'priscilapower92@gmail.com', 1);
+
+insert into contato(telefone, id_pessoa)
+values('47988565033', 1);
+
+insert into contato(telefone, email, id_pessoa)
+values('47992334930', 'aliniribeiroo@gmail.com', 2);
+
+insert into contato(email, id_pessoa)
+values('dani@gmail.com', 3);
+
+insert into contato(email, id_pessoa)
+values('jess@gmail.com', 4);
+
+--inserir conteúdo dentro do endereço
+insert into endereco(logradouro, numero, bairro, cidade,uf, id_pessoa)
+values('Rua Pri', '30', 'Vila nova', 'Blumenau', 'SC', 1);
+
+insert into endereco(logradouro, numero, bairro, cidade,uf, id_pessoa)
+values('Rua Alini', '303', 'Vila nova', 'Blumenau', 'SC', 2);
+
+insert into endereco(logradouro, numero, bairro, cidade,uf, id_pessoa)
+values('Rua Dani', '3083', 'Xanana', 'Blumenau', 'SP', 3);
+
+insert into endereco(logradouro, numero, bairro, cidade,uf, id_pessoa)
+values('Rua Jess', '3083', 'Xanana', 'Xanana', 'PE', 4);
+
+
+--inserir conteúdo dentro do paciente
+insert into paciente (plano_saude, id_pessoa)
+values ('bradesco', 1);
+
+insert into paciente (plano_saude, id_pessoa)
+values ('unimed', 2);
+
+insert into paciente (plano_saude, id_pessoa)
+values ('sul_americana', 3);
+
+-- deletar um conteudo
+--deletar da tabela paciente, onde o id da pessoa é 2
+-- Se não colocar o where, todos os registros da tabela serão deletados
+delete from paciente where id_pessoa = 2;
+
+--inserir conteúdo dentro do médico
+insert into medico (crm, especialidade, id_pessoa)
+values ('AA-21', 'Neurologia', 2);
+
+insert into medico (crm, especialidade, id_pessoa)
+values ('AB-2', 'Psiquiatria', 4);
+
+
+--inserir dados na tabela consulta
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-10-31 09:00:00', 150 , 1, 2);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-09-30 09:00:00', 150 , 1, 2);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-08-30 09:00:00', 150 , 1, 2);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-07-30 09:00:00', 150 , 1, 2);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-07-24 10:30:00', 32.50, 1, 1);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-07-24 10:30:00', 132.50, 3, 2);
+
+insert into consulta (data, valor, id_paciente, id_medico)
+values ('2020-06-24 10:30:00', 132.50, 3, 2);
+
+
+--Iniciando a busca das infos 
+
+--Seleciona todos campos da tabela pessoa
+select * from pessoa; 
+
+
+-- Seleiona os campos nome e cpf, da tabela pessoa;
+select nome, cpf from pessoa;
+
+
+-- Seleiona os campos nome e cpf, da tabela pessoa onde o cpf é = 44444444444;
+select nome, cpf from pessoa where cpf = '44444444444';
+
+-- Seleiona o campo nome, da tabela pessoa onde o cpf é = 44444444444;
+select nome from pessoa where cpf = '44444444444';
+
+
+-- Utilizando alias (Apelido para o campo)
+-- Retornando o campo id, com o nome código, da tabela pessoa, onde o cpf = 44444444444
+select id as codigo from pessoa where cpf = '44444444444';
+
+-- Retorna id e nome, da tabela pessoa onde o campo  id é maior que 2
+select id as codigo, nome from pessoa where id > 2;
+
+
+-- Retorna id e nome, da tabela pessoa ordenando por nome
+select id as codigo, nome from pessoa order by nome;
+
+
+-- Retorna id e nome, da tabela pessoa ordenando decrescente por nome 
+select id as codigo, nome from pessoa order by nome desc;
+
+
+--Select com Inner Join (Select que envolve mais de uma tabela)
+-- Quando trabalhamops com várias tabelas, colocamos um apelido pra tabela, para não ficar confusa a busca.
+-- Buscar o nome da tabela pessoa, juntando a tabela endereco, unindo as duas pelo id_pessoa (Chave estrangeira das tabelas)
+-- onde o campo id_pessoa da tabela endereço, seja igual ao campo id da tabela pessoa.
+select
+	pessoa.id as codigo_pessoa,
+	pessoa.nome,
+	pessoa.data_nascimento,
+	endereco.cidade,
+	endereco.uf,
+	endereco.id as codigo_endereco
+from pessoa
+inner join endereco on endereco.id_pessoa = pessoa.id;
+
+
+-- Busca os dados da tabela pessoa, contato e endereço, juntando eles pelo id de pessoa, onde o Estado é SC e o email não é nulo.
+-- Where sempre precisa estar no final do select, a não ser que o comando seja group_by ou order_by
+select
+	pessoa.id as codigo_pessoa,
+	pessoa.nome,
+	endereco.uf,
+	contato.*
+from pessoa
+inner join endereco on endereco.id_pessoa = pessoa.id
+inner join contato on contato.id_pessoa = pessoa.id
+where endereco.uf = 'SC' and contato.email is not null;
+
+
+
+--Busca dados da tabela consulta, juntando com as tabelas consulta, paciente, pessoa e médico.
+-- junções realizadas são: paciente e consulta, pessoa e paciente, medico e consulta, pessoa e medico
+select 
+	pe.nome,
+	pa.plano_saude,
+	co.data,
+	pem.nome
+from consulta co
+inner join paciente pa on co.id_paciente = pa.id
+inner join pessoa pe on pa.id_pessoa = pe.id
+inner join medico me on co.id_medico = me.id
+inner join pessoa pem on pem.id = me.id;
